@@ -37,11 +37,15 @@ function setupPeek(elem) {
 }
 
 function showPeek(elem) {
+  if (wikiResponse === false)
+    return false;
   elem.addClass('wikitip');
-  elem.append('<span class="wikiinfo"><span class="wikititle"></span><span class="wikitext"></span></span>');
+  elem.append('<span class="wikiinfo"><div class="wikititle"></div><div class="wikitext"></div></span>');
+  $('.wikiinfo .wikititle').text(wikiResponse[0]);
+  $('.wikiinfo .wikitext').text(wikiResponse[1]);
 }
 
-function hidePeek(elem) {
+function hidePeek(elem) {return
   elem.removeClass('wikitip');
   elem.find('.wikiinfo').remove();
 }
@@ -57,7 +61,6 @@ function fetchPeek(link) {
     dataType: "json",
     success: function (data, textStatus, jqXHR) {
       wikiResponse = [JSON.flatten(data)['title'], JSON.flatten(data)['extract']];
-      console.log(wikiResponse);
     },
     error: function (errorMessage) {
     }
