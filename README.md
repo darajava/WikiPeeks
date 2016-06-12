@@ -1,4 +1,3 @@
-# WikiPeek
-Get info quicker!
+# WikiPeeks for Wikipedia
 
-Add a 'peek' option to WikiPedia links
+Read Wikipedia with an added dimension of information.
