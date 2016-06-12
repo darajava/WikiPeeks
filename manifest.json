@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+
+  "name": "WikiPeeks for Wikipedia!",
+  "description": "Add a 'peek' option to WikiPedia links",
+  "version": "0.1",
+  "author": "Dara Javaherian",
+	      
+  "permissions": ["tabs", "*://*.wikipedia.org/wiki/*"],
+		  
+  "icons": {
+    "128": "wiki-128.png"
+  },
+  "browser_action": {
+    "default_icon": "wiki.png",
+    "default_popup": "popup.html"
+  },
+  "web_accessible_resources": [
+    "spinner.gif"
+  ],
+  "content_scripts" : [{
+    "matches" : 
+      ["*://*.wikipedia.org/wiki/*"],
+    "js" : ["jquery.js", "inject.js"],
+    "css" : ["styles.css"]
+  }]
+}
