@@ -33,11 +33,13 @@
 
 .wikiinfo:before{
     border: solid;
-    border-color: #333 transparent;
+    left: 0;
+    bottom: -6px;
+    border-color: #ccc;
+    border-right-color: transparent;
+    border-left-color: transparent;
     border-width: 6px 6px 0 6px;
-    bottom: 20px;
     content: "";
-    left: 50%;
     position: absolute;
     z-index: 100000;
 }

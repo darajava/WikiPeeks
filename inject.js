@@ -41,6 +41,9 @@ function showPeek(elem) {
     return false;
   elem.addClass('wikitip');
   elem.append('<span class="wikiinfo"><div class="wikititle"></div><div class="wikitext"></div></span>');
+  
+  
+  
   $('.wikiinfo .wikititle').text(wikiResponse[0]);
   $('.wikiinfo .wikitext').text(wikiResponse[1]);
 }
