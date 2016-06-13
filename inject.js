@@ -1,4 +1,4 @@
-var wikiResponse = false;
+var wikiResponse = null;
 var shadow = null;
 
 $(document).ready( function() {
@@ -66,12 +66,17 @@ function setupPeek(elem) {
   $('a').mouseout(function() {
     clearTimeout(timeout);
     hidePeek(elem);
-    wikiResponse = false;
+    wikiResponse = null;
   });
 }
 
 function showPeek(elem) {
-  if (wikiResponse === false)
+  // don't bother if we don't have a response or one of title/description
+  if (wikiResponse === null)
+    return false;
+  if (wikiResponse[0].length == 0)
+    return false;
+  if (wikiResponse[1].length == 0)
     return false;
   
   elem.append('<span class="wikitip"></span>')
@@ -134,12 +139,11 @@ function showPeek(elem) {
     
     var offscreenRight = $('#wikipeek-host').offset().left + tipWidth;
     var screenWidth = $(window).width();
-console.log($('#wikipeek-host').offset().top);
+    
     if (offscreenRight > screenWidth) {
       $('#wikipeek-host').css('left', $('#wikipeek-host').offset().left - (offscreenRight - screenWidth + padding));
     }
-    if (maxTipHeight > $('#wikipeek-host').offset().top) {
-console.log($('#wikipeek-host').css('top') + maxTipHeight + elem.height());
+    if (maxTipHeight + document.body.scrollTop > $('#wikipeek-host').offset().top) {
       $('#wikipeek-host').css('top', $('#wikipeek-host').offset().top + maxTipHeight + elem.height() + padding);
     }
 }
