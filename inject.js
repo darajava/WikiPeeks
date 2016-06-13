@@ -2,8 +2,7 @@ var wikiResponse = false;
 var shadow = null;
 
 $(document).ready( function() {
-  peekElem = 
-  $('a').mouseover(function () {
+  peekElem = $('a').mouseover(function () {
     setupPeek($(this));
   });
 });
@@ -11,10 +10,44 @@ $(document).ready( function() {
 function isArticleLink(link) {
   if (!link.startsWith('/wiki/'))
     return false;
-  // We don't want any `Talk:` pages etc
-  // Also if we're gonna be using this dirty hack, we gotta include 2001: A Space Odyssey...
-  if (link.indexOf(':') > -1 && link.indexOf('2001:') == -1)
+  // don't show peek for main page
+  if (link.indexOf('Main_Page') != -1)
     return false;
+  // don't show peek for current page
+  if (window.location.href.indexOf(link) != -1)
+    return false;
+
+  // don't show peeks for any of the wikipedia namespaces but article
+  // https://en.wikipedia.org/wiki/Wikipedia:Namespace 
+  var namespaces = [
+    'talk',
+    'user',
+    'wikipedia',
+    'file',
+    'mediawiki',
+    'template',
+    'help',
+    'category',
+    'portal',
+    'book',
+    'draft',
+    'education_program',
+    'timedtext',
+    'module',
+    'gadget',
+    'gadget_definition',
+    'topic',
+    'special',
+    'media'
+  ];
+
+  for (var i = 0; i < namespaces.length; i++){
+    if (link.toLowerCase().startsWith('/wiki/' + namespaces[i] + ":"))
+      return false;
+    if (link.toLowerCase().startsWith('/wiki/' + namespaces[i] + "_talk:"))
+      return false;
+  }
+
   return true;
 }
 
@@ -53,6 +86,7 @@ function showPeek(elem) {
       .wikiinfo{
           background: rgba(245, 245, 255, 0.96);
           border-radius: 5px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.5);
           border: 1px solid #ccc;
           bottom: 26px;
           color: black;
@@ -61,6 +95,7 @@ function showPeek(elem) {
           padding: 18px;
           position: absolute;
           width: 480px;
+          z-index: 1000;
       }
 
       .wikiinfo .wikititle{
@@ -85,22 +120,27 @@ function showPeek(elem) {
       <div class="wikitext">${wikiResponse[1]}</div>
     </span>`;
 
+    var padding = 20;
+
     $('#wikipeek-host').css({ 
       position: "absolute",
       marginLeft: 0, marginTop: 0,
-      top: elem.offset().top + 20, left: elem.offset().left
+      top: elem.offset().top + padding, left: elem.offset().left
     });
 
-    // Sucks, but it seems to be difficult to find the width of shadow elements
-    // This is the width of the tooltip + the padding
+    // Sucks, but it seems to be difficult to find the size of shadow elements
     var tipWidth = 518;
+    var maxTipHeight = 226;
+    
     var offscreenRight = $('#wikipeek-host').offset().left + tipWidth;
     var screenWidth = $(window).width();
-console.log($('#wikipeek-host').outerWidth());
-console.log(offscreenRight);
-console.log(screenWidth);
+console.log($('#wikipeek-host').offset().top);
     if (offscreenRight > screenWidth) {
-      $('#wikipeek-host').css('left', $('#wikipeek-host').offset().left - (offscreenRight - screenWidth));
+      $('#wikipeek-host').css('left', $('#wikipeek-host').offset().left - (offscreenRight - screenWidth + padding));
+    }
+    if (maxTipHeight > $('#wikipeek-host').offset().top) {
+console.log($('#wikipeek-host').css('top') + maxTipHeight + elem.height());
+      $('#wikipeek-host').css('top', $('#wikipeek-host').offset().top + maxTipHeight + elem.height() + padding);
     }
 }
 
@@ -110,7 +150,7 @@ function hidePeek(elem) {
 }
 
 function fetchPeek(link) {
-  page = link.replace('/wiki/', '');
+  page = link.replace('/wiki/', '').replace(/#.*/, '');
   $.ajax({
     type: "GET",
     // Make this work for whatever language you're currently on
