@@ -6,7 +6,7 @@
   "version": "0.1",
   "author": "Dara Javaherian",
 	      
-  "permissions": ["tabs", "*://*.wikipedia.org/wiki/*"],
+  "permissions": ["*://*.wikipedia.org/wiki/*"],
 		  
   "icons": {
     "128": "wiki-128.png"

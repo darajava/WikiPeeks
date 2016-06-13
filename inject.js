@@ -1,4 +1,5 @@
 var wikiResponse = false;
+var shadow = null;
 
 $(document).ready( function() {
   peekElem = 
@@ -27,7 +28,7 @@ function setupPeek(elem) {
   
   var timeout = setTimeout(function() {
     showPeek(elem);
-  }, 1000);
+  }, 500);
 
   $('a').mouseout(function() {
     clearTimeout(timeout);
@@ -39,18 +40,73 @@ function setupPeek(elem) {
 function showPeek(elem) {
   if (wikiResponse === false)
     return false;
-  elem.addClass('wikitip');
-  elem.append('<span class="wikiinfo"><div class="wikititle"></div><div class="wikitext"></div></span>');
   
-  
-  
-  $('.wikiinfo .wikititle').text(wikiResponse[0]);
-  $('.wikiinfo .wikitext').text(wikiResponse[1]);
+  elem.append('<span class="wikitip"></span>')
+  // Insert node after the body so that it will always be on top
+  $('body').after('<div id="wikipeek-host"></div>');
+
+  // Using DOM shadowing cause I'm just fucking 1337 like that...
+  // ...also this is the way Google made their dictionary extension
+  var shadow = $('#wikipeek-host')[0].createShadowRoot();
+  shadow.innerHTML = `
+    <style>
+      .wikiinfo{
+          background: rgba(245, 245, 255, 0.96);
+          border-radius: 5px;
+          border: 1px solid #ccc;
+          bottom: 26px;
+          color: black;
+          content: attr(title);
+          left: 20%;
+          padding: 18px;
+          position: absolute;
+          width: 480px;
+      }
+
+      .wikiinfo .wikititle{
+          font-family: "Linux Libertine",Georgia,Times,serif;
+          line-height: 1.3;
+          margin-bottom: 14px;
+          padding: 0;
+          padding-bottom: 7px;
+          width: 100%;
+          border-bottom: 1px solid #aaa;
+          font-size: 22px;
+      }
+
+      .wikiinfo .wikitext{
+          max-height: 140px;
+          font-size: 12px;
+          overflow: hidden;
+      }
+    </style>
+    <span class="wikiinfo">
+      <div class="wikititle">${wikiResponse[0]}</div>
+      <div class="wikitext">${wikiResponse[1]}</div>
+    </span>`;
+
+    $('#wikipeek-host').css({ 
+      position: "absolute",
+      marginLeft: 0, marginTop: 0,
+      top: elem.offset().top + 20, left: elem.offset().left
+    });
+
+    // Sucks, but it seems to be difficult to find the width of shadow elements
+    // This is the width of the tooltip + the padding
+    var tipWidth = 518;
+    var offscreenRight = $('#wikipeek-host').offset().left + tipWidth;
+    var screenWidth = $(window).width();
+console.log($('#wikipeek-host').outerWidth());
+console.log(offscreenRight);
+console.log(screenWidth);
+    if (offscreenRight > screenWidth) {
+      $('#wikipeek-host').css('left', $('#wikipeek-host').offset().left - (offscreenRight - screenWidth));
+    }
 }
 
-function hidePeek(elem) {return
+function hidePeek(elem) {
   elem.removeClass('wikitip');
-  elem.find('.wikiinfo').remove();
+  $('#wikipeek-host').remove();
 }
 
 function fetchPeek(link) {
