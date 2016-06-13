@@ -118,6 +118,9 @@ function showPeek(elem) {
           max-height: 140px;
           font-size: 12px;
           overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 10;
+          -webkit-box-orient: vertical; 
       }
     </style>
     <span class="wikiinfo">
