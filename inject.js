@@ -1,5 +1,6 @@
 var wikiResponse = null;
 var shadow = null;
+var locale = document.location.href.match(/:\/\/(.*)\.wikipedia/i)[1];
 
 $(document).ready( function() {
   peekElem = $('a').mouseover(function () {
@@ -160,9 +161,7 @@ function fetchPeek(link) {
   page = link.replace('/wiki/', '').replace(/#.*/, '');
   $.ajax({
     type: "GET",
-    // Make this work for whatever language you're currently on
-    // TODO
-    url: 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=' + page + '&callback=?&redirects=1',
+    url: 'https://' + locale + '.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=' + page + '&callback=?&redirects=1',
     contentType: "application/json; charset=utf-8", 
     dataType: "json",
     success: function (data, textStatus, jqXHR) {
