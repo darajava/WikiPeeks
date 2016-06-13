@@ -90,7 +90,7 @@ function showPeek(elem) {
   shadow.innerHTML = `
     <style>
       .wikiinfo{
-          background: rgba(245, 245, 255, 0.96);
+          background: rgba(246, 246, 246, 0.945);
           border-radius: 5px;
           box-shadow: 0 0 10px rgba(0,0,0,0.5);
           border: 1px solid #ccc;
